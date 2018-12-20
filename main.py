@@ -19,7 +19,7 @@ def get_param_with_bench(bench):
 
     if bench == 'MLPWithMNIST':
         # maximum iterations/epochs per configuration
-        params['max_iter'] = 9
+        params['max_iter'] = 81
         # downsampling rate
         params['eta'] = 3
         # hyperparameters
