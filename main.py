@@ -54,6 +54,7 @@ def main():
 
     args = parser.parse_args()
     params = get_param_with_bench(args.bench)
+    params['homedir'] = '/hyperband_sandbox/' if args.gcp else './'
 
     # run optimization
     hb = Hyperband(**params)

@@ -28,7 +28,7 @@ class Network(nn.Module):
 
 class MLPWithMNIST:
 
-    def __init__(self, hparams, ckpt_name, separate_history):
+    def __init__(self, hparams, ckpt_name, homedir, separate_history):
         self.hparams = hparams
         # batch size
         self.batch_size = 64
@@ -52,7 +52,7 @@ class MLPWithMNIST:
         self.num_gpu = 0
         self.device = torch.device("cuda" if self.num_gpu > 0 else "cpu")
 
-        self.ckpt_dir = "./ckpt"
+        self.ckpt_dir = homedir + "ckpt"
         self.ckpt_name = ckpt_name
 
         # epoch
@@ -64,6 +64,7 @@ class MLPWithMNIST:
         try:
             ckpt = self._load_checkpoint(self.ckpt_name)
             self.model.load_state_dict(ckpt['state_dict'])
+            self.epoch = ckpt['current_epoch']
         except FileNotFoundError:
             pass
 
@@ -72,9 +73,9 @@ class MLPWithMNIST:
         min_val_loss = np.inf
         diff_epoch = num_iter - self.epoch
         for epoch in range(diff_epoch):
-            print("epoch:{}".format(epoch))
             self._train_one_epoch()
             self.epoch += 1
+            print("self.epoch:{}".format(self.epoch))
             val_loss = self._validate_one_epoch()
             self.separate_history[self.ckpt_name].append((self.hparams, val_loss))
             print("val_loss:{}".format(val_loss))
@@ -82,7 +83,8 @@ class MLPWithMNIST:
                 min_val_loss = val_loss
         state = {
             'state_dict': self.model.state_dict(),
-            'min_val_loss': min_val_loss
+            'min_val_loss': min_val_loss,
+            'current_epoch': self.epoch
         }
         self._save_checkpoint(state, self.ckpt_name)
         return min_val_loss
