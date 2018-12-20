@@ -28,7 +28,8 @@ class Network(nn.Module):
 
 class MLPWithMNIST:
 
-    def __init__(self, hparams, ckpt_name):
+    def __init__(self, hparams, ckpt_name, separate_history):
+        self.hparams = hparams
         # batch size
         self.batch_size = 64
         # loader
@@ -47,16 +48,18 @@ class MLPWithMNIST:
                              lr=self.lr,
                              momentum=self.momentum,
                              nesterov=True)
-
         # device
         self.num_gpu = 0
         self.device = torch.device("cuda" if self.num_gpu > 0 else "cpu")
 
         self.ckpt_dir = "./ckpt"
-        self.ckpt_name = str(uuid.uuid4().hex)
+        self.ckpt_name = ckpt_name
 
         # epoch
         self.epoch = 0
+
+        # history
+        self.separate_history = separate_history
 
         try:
             ckpt = self._load_checkpoint(self.ckpt_name)
@@ -73,6 +76,7 @@ class MLPWithMNIST:
             self._train_one_epoch()
             self.epoch += 1
             val_loss = self._validate_one_epoch()
+            self.separate_history[self.ckpt_name].append((self.hparams, val_loss))
             print("val_loss:{}".format(val_loss))
             if val_loss < min_val_loss:
                 min_val_loss = val_loss
