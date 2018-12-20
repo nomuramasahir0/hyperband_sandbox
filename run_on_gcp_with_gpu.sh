@@ -14,4 +14,4 @@ gcloud compute scp --recurse hyperband_sandbox/ masahiro@nomura-tmp-gpu:~
 
 sudo docker run -d \
  --volume $HOME/hyperband_sandbox:/hyperband_sandbox \
-    nmasahiro/black-box-gpu-base python /hyperband_sandbox/main.py MLPWithMNIST
+    nmasahiro/black-box-gpu-base python /hyperband_sandbox/main.py MLPWithMNIST --gcp

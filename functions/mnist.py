@@ -33,7 +33,7 @@ class MLPWithMNIST:
         # batch size
         self.batch_size = 64
         # loader
-        self.loader_train, self.loader_valid, self.loader_test = mnist_data_loader(self.batch_size)
+        self.loader_train, self.loader_valid, self.loader_test = mnist_data_loader(self.batch_size, homedir)
         # model
         self.model = Network(hparams)
 

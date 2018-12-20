@@ -4,10 +4,10 @@ from torch.utils.data import TensorDataset, DataLoader
 from sklearn.model_selection import train_test_split
 
 
-def mnist_data_loader(batch_size):
+def mnist_data_loader(batch_size, homedir):
     # 1. データの前処理
     # print("Step 1: preprocessing data")
-    mnist = fetch_mldata('MNIST original', data_home='./data/')
+    mnist = fetch_mldata('MNIST original', data_home=homedir + 'data/')
     X = mnist.data / 255
     y = mnist.target
 

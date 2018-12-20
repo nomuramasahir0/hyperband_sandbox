@@ -61,7 +61,7 @@ def main():
     hb.run()
     separate_history = hb.separate_history
 
-    plot_util.plot_separately(separate_history)
+    plot_util.plot_separately(separate_history, homedir=params['homedir'])
 
 
 if __name__ == '__main__':
