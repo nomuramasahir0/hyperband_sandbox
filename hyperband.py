@@ -19,6 +19,8 @@ class Hyperband:
         self.hparams = params['hparams']
         # objective function
         self.obj_func = params['obj_func']
+        # history (separate)
+        self.separate_history = {}
 
     def random_sampling(self):
         ps = {}
@@ -44,8 +46,10 @@ class Hyperband:
             hparams = [self.random_sampling() for _ in range(n)]
             print("hparams:{}".format(hparams))
             # obj_funcには，initする前のclassだけ渡しておく
-            # obj_funcs = [self.obj_func(hparam) for hparam in hparams]
             obj_names = [str(uuid.uuid4().hex) for _ in range(n)]
+            # history logging
+            for obj_name in obj_names:
+                self.separate_history[obj_name] = []
 
             print("inner loop start")
             for i in range(s + 1):
@@ -59,8 +63,9 @@ class Hyperband:
                 # model
                 val_losses = []
                 for (hparam, obj_name) in zip(hparams, obj_names):
-                    obj = self.obj_func(hparam, obj_name)
+                    obj = self.obj_func(hparam, obj_name, self.separate_history)
                     val_loss = obj.evaluate(num_iter=int(r_i))
+                    # val_loss = np.random.rand()
                     val_losses.append(val_loss)
                     del obj
                     gc.collect()

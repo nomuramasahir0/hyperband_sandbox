@@ -5,6 +5,7 @@ import numpy as np
 import os
 import datetime
 from hyperband import Hyperband
+from utils import plot_util
 
 
 def get_path_with_time(alg_name):
@@ -18,7 +19,7 @@ def get_param_with_bench(bench):
 
     if bench == 'MLPWithMNIST':
         # maximum iterations/epochs per configuration
-        params['max_iter'] = 27
+        params['max_iter'] = 9
         # downsampling rate
         params['eta'] = 3
         # hyperparameters
@@ -57,6 +58,9 @@ def main():
     # run optimization
     hb = Hyperband(**params)
     hb.run()
+    separate_history = hb.separate_history
+
+    plot_util.plot_separately(separate_history)
 
 
 if __name__ == '__main__':
