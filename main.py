@@ -6,6 +6,7 @@ import os
 import datetime
 from hyperband import Hyperband
 from utils import plot_util
+import time
 import sys
 
 
@@ -79,4 +80,7 @@ def main():
 
 
 if __name__ == '__main__':
+    start = time.time()
     main()
+    elapsed_time = time.time() - start
+    print("elapsed_time:{}".format(elapsed_time) + "[sec]")

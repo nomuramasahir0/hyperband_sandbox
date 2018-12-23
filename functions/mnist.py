@@ -30,7 +30,7 @@ class MLPWithMNIST:
     def __init__(self, hparams, ckpt_name, homedir, separate_history, patience):
         self.hparams = hparams
         # batch size
-        self.batch_size = 64
+        self.batch_size = 256
         # loader
         self.loader_train, self.loader_valid, self.loader_test = mnist_data_loader(self.batch_size, homedir)
         # model

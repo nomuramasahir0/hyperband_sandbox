@@ -25,10 +25,6 @@ gcloud compute scp --recurse hyperband_sandbox/ ${USER_NAME}@${INSTANCE_NAME}:~
 
 # after connecting the instance
 ## https://github.com/nmasahiro/dockerfiles/blob/master/black-box-gpu-base/Dockerfile
-sudo docker run -d \
- --volume $HOME/hyperband_sandbox:/hyperband_sandbox \
-    nmasahiro/black-box-gpu-base python /hyperband_sandbox/main.py ${BENCH} --gcp
-
 sudo nvidia-docker run -d \
  --volume $HOME/hyperband_sandbox:/hyperband_sandbox \
     nmasahiro/black-box-gpu-base python /hyperband_sandbox/main.py ${BENCH} --gcp
