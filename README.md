@@ -14,8 +14,7 @@ $ python main.py MLPWithMNIST --max_iter=27 --eta=3
 # elapsed_time:1610.8062589168549[sec]
 ```
 
-
-
+[!hyperband result image](https://github.com/nmasahiro/hyperband_sandbox/raw/master/separate_plot.png)
 
 
 ## License
