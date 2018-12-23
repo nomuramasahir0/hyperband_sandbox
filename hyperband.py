@@ -23,6 +23,8 @@ class Hyperband:
         self.separate_history = {}
         # homedir
         self.homedir = params['homedir']
+        # patience for original early-stopping
+        self.patience = params['patience']
 
     def random_sampling(self):
         ps = {}
@@ -31,49 +33,49 @@ class Hyperband:
         return ps
 
     def run(self):
+        best = {'hparam': {}, 'val_loss': np.inf}
         # Begin Finite Horizon Hyperband outerloop. Repeat indefinitely.
         # hedge strategy
-        print("outer loop start:")
         for s in reversed(range(self.s_max + 1)):
-            print("s:{}".format(s))
             # initial number of configuration
             n = int(math.ceil(int(self.B / self.max_iter / (s + 1)) * self.eta ** s))
-            print("n:{}".format(n))
             # initial numnber of iterations to run configuration
             r = self.max_iter * self.eta ** (-s)
-            print("r:{}".format(r))
+            print("[outer] s:{}, n:{}, r:{}".format(s, n, r))
 
             # Begin Finite Horizon Successive Halving with (n, r)
             # early-stopping procedure
             hparams = [self.random_sampling() for _ in range(n)]
-            print("hparams:{}".format(hparams))
             obj_names = [str(uuid.uuid4().hex) for _ in range(n)]
             # history logging
             for obj_name in obj_names:
                 self.separate_history[obj_name] = []
 
-            print("inner loop start")
             for i in range(s + 1):
-                print("i:{}".format(i))
                 # Run each of the n_i configs for r_i iterations and keep best n_i / eta
                 n_i = n * self.eta ** (-i)
-                print("n_i:{}".format(n_i))
                 r_i = r * self.eta ** i
-                print("r_i:{}".format(r_i))
+                print("[inner] i:{}, n_i:{}, r_i:{}".format(i, n_i, r_i))
 
                 # model
                 val_losses = []
+                overfitted_flags = []
                 for (hparam, obj_name) in zip(hparams, obj_names):
-                    obj = self.obj_func(hparam, obj_name, self.homedir, self.separate_history)
-                    val_loss = obj.evaluate(num_iter=int(r_i))
-                    # val_loss = np.random.rand()
+                    obj = self.obj_func(hparam, obj_name, self.homedir, self.separate_history, self.patience)
+                    val_loss, overfitted = obj.evaluate(num_iter=int(r_i))
+                    if val_loss < best['val_loss']:
+                        best = {'hparam': hparam, 'val_loss': val_loss}
                     val_losses.append(val_loss)
+                    overfitted_flags.append(overfitted)
                     del obj
                     gc.collect()
 
                 arg_val_losses = np.argsort(val_losses)
-                hparams = [hparams[j] for j in arg_val_losses[0:int(n_i / self.eta)]]
-                obj_names = [obj_names[j] for j in arg_val_losses[0:int(n_i / self.eta)]]
+                top_k_indices = [j for j in arg_val_losses[0:int(n_i / self.eta)] if not overfitted_flags[j]]
+                print("top_k_indices:{}".format(top_k_indices))
+                hparams = [hparams[j] for j in top_k_indices]
+                obj_names = [obj_names[j] for j in top_k_indices]
                 print('replace finished.')
                 print("hparams:{}".format(hparams))
         # End Finite Horizon Successive Halving
+        return best

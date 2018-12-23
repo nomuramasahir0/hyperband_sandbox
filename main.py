@@ -6,6 +6,7 @@ import os
 import datetime
 from hyperband import Hyperband
 from utils import plot_util
+import sys
 
 
 def get_path_with_time(alg_name):
@@ -18,15 +19,12 @@ def get_param_with_bench(bench):
     params = {}
 
     if bench == 'MLPWithMNIST':
-        # maximum iterations/epochs per configuration
-        params['max_iter'] = 81
-        # downsampling rate
-        params['eta'] = 3
         # hyperparameters
         params['hparams'] = {
-            'lr': Uniform(0.001, 0.20),
-            'momentum': Uniform(0.80, 0.999),
-            'fc1_unit': RandInt(50, 500)
+            'lr': Uniform(0.001, 0.30),
+            'momentum': Uniform(0.50, 0.999),
+            'fc1_unit': RandInt(10, 1000),
+            'fc2_unit': RandInt(10, 1000)
         }
         params['obj_func'] = MLPWithMNIST
 
@@ -47,20 +45,36 @@ def main():
                         default=None,
                         type=str,
                         choices=['MLPWithMNIST'],
-                        help='specify the benchmark function you want to run',
+                        help='the benchmark function you want to run',
                         metavar=None)
+    parser.add_argument('--max_iter',
+                        type=int,
+                        default=27,
+                        help='maximum amount of resource that can be allocated to a single configuration')
+    parser.add_argument('--eta',
+                        type=int,
+                        default=3,
+                        help='proportion of the configurations discarded in each round of SH')
+    parser.add_argument('--patience',
+                        type=int,
+                        default=5,
+                        help='threshold for original early-stopping')
     parser.add_argument('--gcp',
                         action='store_true')
 
     args = parser.parse_args()
     params = get_param_with_bench(args.bench)
+    params['max_iter'] = args.max_iter
+    params['eta'] = args.eta
+    params['patience'] = args.patience
     params['homedir'] = '/hyperband_sandbox/' if args.gcp else './'
 
     # run optimization
     hb = Hyperband(**params)
-    hb.run()
-    separate_history = hb.separate_history
+    best = hb.run()
+    print("best:{}".format(best))
 
+    separate_history = hb.separate_history
     plot_util.plot_separately(separate_history, homedir=params['homedir'])
 
 
