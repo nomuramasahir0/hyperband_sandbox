@@ -71,10 +71,8 @@ class MLPWithMNIST:
         for epoch in range(diff_epoch):
             self._train_one_epoch()
             self.epoch += 1
-            print("self.epoch:{}".format(self.epoch))
             val_loss = self._validate_one_epoch()
             self.separate_history[self.ckpt_name].append((self.hparams, val_loss))
-            print("val_loss:{}".format(val_loss))
             if val_loss < min_val_loss:
                 min_val_loss = val_loss
                 overfitted_cnt = 0

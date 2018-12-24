@@ -7,7 +7,6 @@ import datetime
 from hyperband import Hyperband
 from utils import plot_util
 import time
-import sys
 
 
 def get_path_with_time(alg_name):

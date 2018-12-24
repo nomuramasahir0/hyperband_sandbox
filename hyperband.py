@@ -72,10 +72,7 @@ class Hyperband:
 
                 arg_val_losses = np.argsort(val_losses)
                 top_k_indices = [j for j in arg_val_losses[0:int(n_i / self.eta)] if not overfitted_flags[j]]
-                print("top_k_indices:{}".format(top_k_indices))
                 hparams = [hparams[j] for j in top_k_indices]
                 obj_names = [obj_names[j] for j in top_k_indices]
-                print('replace finished.')
-                print("hparams:{}".format(hparams))
         # End Finite Horizon Successive Halving
         return best
