@@ -2,6 +2,8 @@
 
 hyperband implementation with minimal benchmark problem
 
+[Hyperbandの解説（ユーザ編）](https://nmasahiro.com/post/hyperband_user/)
+
 ## Getting Started
 
 ## Example
