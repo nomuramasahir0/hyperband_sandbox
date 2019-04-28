@@ -71,7 +71,8 @@ class Hyperband:
                     gc.collect()
 
                 arg_val_losses = np.argsort(val_losses)
-                top_k_indices = [j for j in arg_val_losses[0:int(n_i / self.eta)] if not overfitted_flags[j]]
+                # top_k_indices = [j for j in arg_val_losses[0:int(n_i / self.eta)] if not overfitted_flags[j]]
+                top_k_indices = [j for j in arg_val_losses[0:int(n_i / self.eta)]]
                 hparams = [hparams[j] for j in top_k_indices]
                 obj_names = [obj_names[j] for j in top_k_indices]
         # End Finite Horizon Successive Halving

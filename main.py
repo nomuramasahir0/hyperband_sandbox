@@ -7,6 +7,7 @@ import datetime
 from hyperband import Hyperband
 from utils import plot_util
 import time
+import pandas as pd
 
 
 def get_path_with_time(alg_name):
@@ -23,8 +24,8 @@ def get_param_with_bench(bench):
         params['hparams'] = {
             'lr': Uniform(0.001, 0.30),
             'momentum': Uniform(0.50, 0.999),
-            'fc1_unit': RandInt(10, 1000),
-            'fc2_unit': RandInt(10, 1000)
+            'fc1_unit': RandInt(30, 1000),
+            'fc2_unit': RandInt(30, 1000)
         }
         params['obj_func'] = MLPWithMNIST
 
@@ -75,6 +76,13 @@ def main():
     print("best:{}".format(best))
 
     separate_history = hb.separate_history
+    print("separate_history:{}".format(separate_history))
+    i = 0
+    for k, v in separate_history.items():
+        df = pd.DataFrame(v)
+        df.to_csv("./log_{}.csv".format(i))
+        i += 1
+
     plot_util.plot_separately(separate_history, homedir=params['homedir'])
 
 

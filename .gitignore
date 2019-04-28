@@ -1,3 +1,6 @@
 data/
 log/
 ckpt/
+
+*.csv
+*.pdf
